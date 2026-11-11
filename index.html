@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EspBot Catalog - Data Repository</title>
+  <meta name="description" content="Browse and view EspBot robot catalog and expression data files.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090d16;
+      --surface: #101726;
+      --surface-hover: #182238;
+      --surface-border: #1e2c47;
+      --surface-border-hover: #334b75;
+      --text: #e6edf8;
+      --text-muted: #8b9bb4;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-glow: rgba(59, 130, 246, 0.15);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background gradient glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(16, 185, 129, 0.05) 50%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 2.5rem;
+    }
+
+    .nav-breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--primary-hover);
+      margin-bottom: 1rem;
+    }
+
+    .nav-breadcrumb a {
+      color: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: var(--transition);
+    }
+
+    .nav-breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-title .brand-gradient {
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 640px;
+    }
+
+    /* Action Toolbar */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(9, 13, 22, 0.8);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.85rem;
+      width: 100%;
+      max-width: 340px;
+      transition: var(--transition);
+    }
+
+    .search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .search-box svg {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      width: 100%;
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--surface-border);
+      color: var(--text-muted);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: var(--transition);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--surface-border);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--surface-border-hover);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* File List */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .file-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .file-card:hover {
+      background: var(--surface-hover);
+      border-color: var(--surface-border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .file-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.15rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-hover);
+      flex-shrink: 0;
+    }
+
+    .file-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.35rem;
+    }
+
+    .file-name-link {
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: var(--transition);
+    }
+
+    .file-name-link:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    .file-path {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .file-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .file-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .file-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    /* Embedded Preview section */
+    .preview-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 15, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .preview-modal-overlay.active {
+      display: flex;
+    }
+
+    .preview-modal {
+      background: var(--surface);
+      border: 1px solid var(--surface-border-hover);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 800px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    pre code {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #93c5fd;
+      line-height: 1.6;
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--surface-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    /* Info card section */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+
+    .info-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #f1f5f9;
+    }
+
+    .info-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .code-pill {
+      display: block;
+      margin-top: 0.75rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+      background: var(--surface);
+      border: 1px dashed var(--surface-border);
+      border-radius: var(--radius-md);
+      display: none;
+    }
+
+    .empty-state.active {
+      display: block;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--surface-border);
+      padding: 1.5rem 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--primary-hover);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 680px) {
+      .file-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .file-actions {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 0.5rem;
+      }
+      .btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="nav-breadcrumb">
+        <a href="data/" target="_blank" rel="noopener noreferrer" title="Browse /data/ directory in new folder/tab">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          espbot-catalog
+        </a>
+        <span>/</span>
+        <a href="data/" target="_blank" rel="noopener noreferrer" style="font-weight: 600;">data/ ↗</a>
+      </div>
+
+      <h1 class="hero-title">
+        <span>🤖</span>
+        <span class="brand-gradient">EspBot Data Catalog</span>
+      </h1>
+      <p class="hero-desc">
+        Browse and access robot animation frames, catalogs, and expression data stored in the <code style="font-family: var(--font-mono); color: #93c5fd;">/data</code> directory. Click any item to view the raw data file in a new tab.
+      </p>
+    </header>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Filter files (e.g. catalog, json)...">
+      </div>
+
+      <div class="toolbar-actions">
+        <span class="badge badge-success" id="fileCountBadge">1 File Available</span>
+        <a href="data/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" title="Open data folder in a new window/tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Open /data/ Folder ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- File List Section -->
+    <main>
+      <div class="file-list" id="fileListContainer">
+        <!-- Rendered dynamically via JS with fallback pre-rendering -->
+        <article class="file-card" data-filename="espbot-catalog.json">
+          <div class="file-main">
+            <div class="file-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div class="file-details">
+              <div class="file-title-row">
+                <!-- Clicking this opens data file in new folder/tab -->
+                <a href="data/espbot-catalog.json" target="_blank" rel="noopener noreferrer" class="file-name-link" title="Open espbot-catalog.json in new tab">
+                  espbot-catalog.json
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+                <span class="file-path">data/espbot-catalog.json</span>
+              </div>
+              <div class="file-meta">
+                <span>📁 JSON Data File</span>
+                <span id="fileSizeSpan">⚡ ~19.7 KB</span>
+                <span id="itemSummarySpan">✨ Expressions catalog</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="file-actions">
+            <button type="button" class="btn btn-secondary" onclick="previewFile('data/espbot-catalog.json', 'espbot-catalog.json')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Preview
+            </button>
+            <a href="data/espbot-catalog.json" download="espbot-catalog.json" class="btn btn-secondary" title="Download data file">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download
+            </a>
+            <!-- Primary Action: Click to open file in new folder/tab -->
+            <a href="data/espbot-catalog.json" target="_blank" rel="noopener noreferrer" class="btn btn-primary" title="Open data file in new window/tab">
+              Open File ↗
+            </a>
+          </div>
+        </article>
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 0.5rem;">No files matched your search.</p>
+        <button class="btn btn-secondary" onclick="resetSearch()">Clear Filter</button>
+      </div>
+
+      <!-- Info & ESP32 Integration Guide -->
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            ESP32 / Arduino Integration
+          </h3>
+          <p>You can fetch this catalog directly in your ESP32 / ESP8266 robot firmware using HTTPClient:</p>
+          <code class="code-pill">http.begin(client, "data/espbot-catalog.json");</code>
+        </div>
+
+        <div class="info-card">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            Direct File Access
+          </h3>
+          <p>Every file item in the list above links directly to its relative path with <code>target="_blank"</code> to open seamlessly in a new folder or tab.</p>
+          <code class="code-pill">href="data/espbot-catalog.json" target="_blank"</code>
+        </div>
+      </div>
+    </main>
+
+    <!-- Preview Modal -->
+    <div class="preview-modal-overlay" id="previewOverlay" onclick="handleOverlayClick(event)">
+      <div class="preview-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+          <div class="modal-title" id="modalTitle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <span id="previewModalFileName">Preview</span>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="closePreview()" style="padding: 0.35rem 0.65rem;">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <pre><code id="previewCode">Loading...</code></pre>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePreview()">Close</button>
+          <a id="modalOpenBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            Open File in New Tab ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>EspBot Catalog &bull; <a href="data/" target="_blank" rel="noopener noreferrer">Browse /data/ folder</a> &bull; Powered by EspBot</p>
+    </footer>
+  </div>
+
+  <script>
+    // Known files located in the data directory
+    const knownFiles = [
+      {
+        name: 'espbot-catalog.json',
+        path: 'data/espbot-catalog.json',
+        type: 'application/json',
+        category: 'Expressions',
+        description: 'Robot expressions & animations catalog'
+      }
+    ];
+
+    // Optional dynamic discovery:
+    // If hosted on GitHub or server with API, probe for more files in data/
+    async function discoverFiles() {
+      try {
+        // Try to fetch espbot-catalog.json to enrich details
+        const res = await fetch('data/espbot-catalog.json');
+        if (res.ok) {
+          const data = await res.json();
+          const sizeKb = (new Blob([JSON.stringify(data)]).size / 1024).toFixed(1);
+          const sizeSpan = document.getElementById('fileSizeSpan');
+          const summarySpan = document.getElementById('itemSummarySpan');
+          if (sizeSpan) sizeSpan.textContent = `⚡ ~${sizeKb} KB`;
+          if (summarySpan && data.items && data.items.length) {
+            const firstItem = data.items[0];
+            summarySpan.textContent = `✨ ${data.items.length} item (${firstItem.title || firstItem.id})`;
+          }
+        }
+      } catch (e) {
+        // Fallback gracefully to default static text
+        console.log('Running in static mode:', e);
+      }
+    }
+
+    // Filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const fileContainer = document.getElementById('fileListContainer');
+    const emptyState = document.getElementById('emptyState');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const cards = fileContainer.querySelectorAll('.file-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          const match = text.includes(query);
+          card.style.display = match ? 'flex' : 'none';
+          if (match) visibleCount++;
+        });
+
+        if (emptyState) {
+          emptyState.classList.toggle('active', visibleCount === 0);
+        }
+      });
+    }
+
+    function resetSearch() {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+      }
+    }
+
+    // Preview Modal Logic
+    async function previewFile(filePath, fileName) {
+      const overlay = document.getElementById('previewOverlay');
+      const titleEl = document.getElementById('previewModalFileName');
+      const codeEl = document.getElementById('previewCode');
+      const openBtn = document.getElementById('modalOpenBtn');
+
+      titleEl.textContent = fileName;
+      openBtn.href = filePath;
+      codeEl.textContent = 'Loading file contents...';
+      overlay.classList.add('active');
+
+      try {
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const text = await response.text();
+        
+        // Pretty print JSON if applicable
+        try {
+          const parsed = JSON.parse(text);
+          codeEl.textContent = JSON.stringify(parsed, null, 2);
+        } catch {
+          codeEl.textContent = text;
+        }
+      } catch (err) {
+        codeEl.textContent = 'Unable to fetch file directly via AJAX (may be due to local file:// protocol restrictions).\n\nPlease click "Open File in New Tab" below to view the file directly.';
+      }
+    }
+
+    function closePreview() {
+      const overlay = document.getElementById('previewOverlay');
+      overlay.classList.remove('active');
+    }
+
+    function handleOverlayClick(event) {
+      if (event.target === document.getElementById('previewOverlay')) {
+        closePreview();
+      }
+    }
+
+    // Keyboard support (Escape to close modal)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePreview();
+    });
+
+    // Run discovery on page load
+    discoverFiles();
+  </script>
+</body>
+</html>
