@@ -566,7 +566,7 @@
       </div>
 
       <div class="toolbar-actions">
-        <span class="badge badge-success" id="fileCountBadge">1 File Available</span>
+        <span class="badge badge-success" id="fileCountBadge">2 Files Available</span>
       </div>
     </div>
 
@@ -624,6 +624,58 @@
             </a>
             <!-- Primary Action: Click to open file in new folder/tab -->
             <a href="data/espbot-catalog.json" target="_blank" rel="noopener noreferrer" class="btn btn-primary" title="Open data file in new window/tab">
+              Open File ↗
+            </a>
+          </div>
+        </article>
+        <article class="file-card" data-filename="espbot-firmware.json">
+          <div class="file-main">
+            <div class="file-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div class="file-details">
+              <div class="file-title-row">
+                <a href="data/espbot-firmware.json" target="_blank" rel="noopener noreferrer" class="file-name-link" title="Open espbot-firmware.json in new tab">
+                  espbot-firmware.json
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+                <span class="file-path">data/espbot-firmware.json</span>
+              </div>
+              <div class="file-meta">
+                <span>📁 JSON Firmware Manifest</span>
+                <span>⚡ ~0.1 KB</span>
+                <span>🔗 Latest firmware binary</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="file-actions">
+            <button type="button" class="btn btn-secondary" onclick="previewFile('data/espbot-firmware.json', 'espbot-firmware.json')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Preview
+            </button>
+            <a href="data/espbot-firmware.json" download="espbot-firmware.json" class="btn btn-secondary" title="Download data file">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download
+            </a>
+            <a href="data/espbot-firmware.json" target="_blank" rel="noopener noreferrer" class="btn btn-primary" title="Open data file in new window/tab">
               Open File ↗
             </a>
           </div>
@@ -705,6 +757,13 @@
         type: 'application/json',
         category: 'Expressions',
         description: 'Robot expressions & animations catalog'
+      },
+      {
+        name: 'espbot-firmware.json',
+        path: 'data/espbot-firmware.json',
+        type: 'application/json',
+        category: 'Firmware',
+        description: 'Latest firmware binary manifest'
       }
     ];
 
@@ -720,7 +779,7 @@
           const sizeSpan = document.getElementById('fileSizeSpan');
           const summarySpan = document.getElementById('itemSummarySpan');
           if (sizeSpan) sizeSpan.textContent = `⚡ ~${sizeKb} KB`;
-          if (summarySpan && data.items && data.items.length) {
+          if (summarySpan && Array.isArray(data.items) && data.items.length) {
             const firstItem = data.items[0];
             summarySpan.textContent = `✨ ${data.items.length} item (${firstItem.title || firstItem.id})`;
           }
