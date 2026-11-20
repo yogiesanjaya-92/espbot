@@ -798,22 +798,12 @@
         }
         document.getElementById('firmwareVersionSpan').textContent = `Firmware Version: ${data.version}`;
 
-        if (typeof data.binary !== 'string' || !data.binary.trim()) {
-          throw new Error('Firmware manifest does not contain a binary URL');
+        if (typeof data.size !== 'number' || !Number.isFinite(data.size) || data.size < 0) {
+          throw new Error('Firmware manifest does not contain a valid size');
         }
-        const binaryResponse = await fetch(data.binary, { method: 'HEAD' });
-        if (!binaryResponse.ok) throw new Error('Binary HTTP ' + binaryResponse.status);
-        const contentLength = binaryResponse.headers.get('content-length');
-        if (contentLength === null || contentLength.trim() === '') {
-          throw new Error('Binary response does not provide Content-Length');
-        }
-        const sizeBytes = Number(contentLength);
-        if (!Number.isFinite(sizeBytes) || sizeBytes < 0) {
-          throw new Error('Binary response provides an invalid Content-Length');
-        }
-        const sizeLabel = sizeBytes >= 1024 * 1024
-          ? `${(sizeBytes / (1024 * 1024)).toFixed(2)} MB`
-          : `${(sizeBytes / 1024).toFixed(1)} KB`;
+        const sizeLabel = data.size >= 1024 * 1024
+          ? `${(data.size / (1024 * 1024)).toFixed(2)} MB`
+          : `${(data.size / 1024).toFixed(1)} KB`;
         document.getElementById('firmwareSizeSpan').textContent = `⚡ ~${sizeLabel}`;
       } catch (e) {
         document.getElementById('firmwareSizeSpan').textContent = '⚡ Size unavailable';

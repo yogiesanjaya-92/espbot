@@ -1,4 +1,7 @@
 {
   "version": "1.0.0",
-  "binary": "https://yogiesanjaya-92.github.io/espbot/firmware/v.1.0.0/espbot-device.ino.bin"
+  "binary": "https://yogiesanjaya-92.github.io/espbot/firmware/v.1.0.0/espbot-device.ino.bin",
+  "size": 842224,
+  "crc32": "62144287",
+  "releaseNotes": "Bug fixes and performance improvements"
 }
