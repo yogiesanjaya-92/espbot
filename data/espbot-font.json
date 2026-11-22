@@ -1,0 +1,17 @@
+{
+  "version": "0.0.0",
+  "fonts": [
+	  {
+		  "title": "Dancing Script",
+		  "font" : "https://yogiesanjaya-92.github.io/espbot/font/DancingScript-Regular.ttf"
+	  },
+	  {
+		  "title": "Playfair Display",
+		  "font" : "https://yogiesanjaya-92.github.io/espbot/font/PlayfairDisplay-Regular.ttf"
+	  },
+	  {
+		  "title": "Roboto",
+		  "font" : "https://yogiesanjaya-92.github.io/espbot/font/Roboto-Regular.ttf"
+	  }
+  ]
+}
